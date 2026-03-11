@@ -15,10 +15,13 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script_stop: true
+          debug: true
           script: |
             set -e
             cd ~/habit-tracker-backend
             git pull
             ./gradlew build
             sudo systemctl restart habittracker
-            sudo systemctl status habittracker --no-pager
+            curl http://localhost:8080/
