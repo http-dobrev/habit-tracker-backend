@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="21">
+      <module name="com.konstantin.habittracker" target="21" />
+      <module name="com.konstantin.habittracker.main" target="21" />
+      <module name="com.konstantin.habittracker.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
   <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="com.konstantin.habittracker" options="-parameters" />
       <module name="com.konstantin.habittracker.main" options="-parameters" />
       <module name="com.konstantin.habittracker.test" options="-parameters" />
-      <module name="habittracker" options="-parameters" />
-      <module name="habittracker.main" options="-parameters" />
-      <module name="habittracker.test" options="-parameters" />
     </option>
   </component>
 </project>
