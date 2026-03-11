@@ -26,4 +26,4 @@ jobs:
             ./gradlew build
             sudo systemctl restart habittracker
             sleep 8
-            sudo systemctl is-active --quiet habittracker
+            curl -f http://localhost:8080/health
