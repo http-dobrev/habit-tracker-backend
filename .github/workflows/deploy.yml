@@ -25,5 +25,14 @@ jobs:
             chmod +x gradlew
             ./gradlew build
             sudo systemctl restart habittracker
-            sleep 8
-            curl -f http://localhost:8080/health
+            
+            for i in {1..10}; do
+              if curl -fs http://localhost:8080/health; then
+                echo "App started successfully"
+                exit 0
+              fi
+              sleep 2
+            done
+            
+            echo "App failed to start"
+            exit 1
