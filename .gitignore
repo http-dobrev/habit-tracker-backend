@@ -417,3 +417,5 @@ FodyWeavers.xsd
 # Ignore gradle
 build/
 .gradle/
+out/
+*.class
