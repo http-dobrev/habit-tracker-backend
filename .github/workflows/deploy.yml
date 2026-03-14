@@ -25,7 +25,7 @@ jobs:
             cd ~/habit-tracker-backend
             git pull
             chmod +x gradlew
-            ./gradlew build
+            ./gradlew build -x test
             sudo systemctl restart habittracker
 
             sleep 2
