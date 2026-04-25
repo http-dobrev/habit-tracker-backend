@@ -2,7 +2,7 @@ package com.konstantin.habittracker.controller;
 
 
 import com.konstantin.habittracker.dto.request.RegisterRequest;
-import com.konstantin.habittracker.dto.response.RegisterResponse;
+import com.konstantin.habittracker.dto.response.AuthResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,7 @@ public class AuthController {
 
         //temporary
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                new RegisterResponse(
+                new AuthResponse(
                         "jwt-token-here",
                         3600,
                         "User successfully registered"
