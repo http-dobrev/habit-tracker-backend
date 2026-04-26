@@ -4,6 +4,7 @@ import com.konstantin.habittracker.dto.request.RegisterRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
 import com.konstantin.habittracker.exception.InvalidRequestException;
+import com.konstantin.habittracker.model.Role;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.persistence.UserRepository;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,8 @@ public class AuthService {
         User user = new User(
                 request.getName(),
                 email,
-                hashedPassword
+                hashedPassword,
+                Role.USER
         );
 
         User savedUser = userRepository.save(user);
