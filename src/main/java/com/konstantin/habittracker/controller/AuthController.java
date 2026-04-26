@@ -1,8 +1,10 @@
 package com.konstantin.habittracker.controller;
 
 
+import com.konstantin.habittracker.business.logic.service.AuthService;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
-import com.konstantin.habittracker.dto.response.RegisterResponse;
+import com.konstantin.habittracker.dto.response.AuthResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
 
-        //temporary
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new RegisterResponse(
-                        "jwt-token-here",
-                        3600,
-                        "User successfully registered"
-                )
-        );
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

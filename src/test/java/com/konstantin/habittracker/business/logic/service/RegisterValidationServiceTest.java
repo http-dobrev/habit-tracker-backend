@@ -1,6 +1,6 @@
-package com.konstantin.habittracker.business.logic.impl;
+package com.konstantin.habittracker.business.logic.service;
 
-import com.konstantin.habittracker.domain.User;
+import com.konstantin.habittracker.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
