@@ -1,8 +1,10 @@
 package com.konstantin.habittracker.business.logic.service;
 
+import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
+import com.konstantin.habittracker.exception.InvalidCredentialsException;
 import com.konstantin.habittracker.exception.InvalidRequestException;
 import com.konstantin.habittracker.model.Role;
 import com.konstantin.habittracker.model.User;
@@ -46,6 +48,29 @@ public class AuthService {
                 token,
                 expirationInSeconds,
                 "User successfully registered"
+        );
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        boolean passwordMatches = passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()
+        );
+
+        if (!passwordMatches) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        String token = jwtService.generateToken(user);
+
+        return new AuthResponse(
+                token,
+                jwtService.getExpirationInSeconds(),
+                "User successfully logged in"
         );
     }
 }
