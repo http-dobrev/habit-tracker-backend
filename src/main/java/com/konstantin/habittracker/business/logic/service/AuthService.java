@@ -3,15 +3,14 @@ package com.konstantin.habittracker.business.logic.service;
 import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
+import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
-import com.konstantin.habittracker.exception.InvalidRequestException;
 import com.konstantin.habittracker.model.Role;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.persistence.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class AuthService {
@@ -51,7 +50,12 @@ public class AuthService {
         return new AuthResponse(
                 token,
                 expirationInSeconds,
-                "User successfully registered"
+                new UserResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRole().name()
+                )
         );
     }
 
@@ -70,11 +74,17 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(user);
+        Integer expirationInSeconds = jwtService.getExpirationInSeconds();
 
         return new AuthResponse(
                 token,
-                jwtService.getExpirationInSeconds(),
-                "User successfully logged in"
+                expirationInSeconds,
+                new UserResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRole().name()
+                )
         );
     }
 }

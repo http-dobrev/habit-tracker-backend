@@ -3,12 +3,12 @@ package com.konstantin.habittracker.dto.response;
 public class AuthResponse {
     public String token;
     public int expiresIn;
-    public String message;
+    public UserResponse user;
 
-    public AuthResponse(String token, int expiresIn, String message) {
+    public AuthResponse(String token, int expiresIn, UserResponse user) {
         this.token = token;
         this.expiresIn = expiresIn;
-        this.message = message;
+        this.user = user;
     }
 
     public String getToken() {
@@ -18,7 +18,7 @@ public class AuthResponse {
         return expiresIn;
     }
 
-    public String getMessage() {
-        return message;
+    public UserResponse getUser() {
+        return user;
     }
 }
