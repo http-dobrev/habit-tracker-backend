@@ -2,6 +2,7 @@ package com.konstantin.habittracker.business.logic.service;
 
 import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
+import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
 import com.konstantin.habittracker.model.Role;
 import com.konstantin.habittracker.model.User;
@@ -64,11 +65,17 @@ class AuthServiceLoginTest {
 
         // Act
         AuthResponse response = authService.login(request);
+        UserResponse responseUser = response.getUser();
 
         // Assert
         assertEquals("jwt-token", response.getToken());
         assertEquals(3600, response.getExpiresIn());
-        assertEquals("User successfully logged in", response.getMessage());
+
+        assertNotNull(responseUser);
+        assertEquals(user.getId(), responseUser.getId());
+        assertEquals("Konstantin", responseUser.getName());
+        assertEquals("test@email.com", responseUser.getEmail());
+        assertEquals("USER", responseUser.getRole());
     }
 
     @Test
