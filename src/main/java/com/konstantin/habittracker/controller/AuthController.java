@@ -5,13 +5,13 @@ import com.konstantin.habittracker.business.logic.service.AuthService;
 import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
+import com.konstantin.habittracker.dto.response.UserResponse;
+import com.konstantin.habittracker.model.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -35,5 +35,18 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser(Authentication authentication) {
 
+        User user = (User) authentication.getPrincipal();
+
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }
