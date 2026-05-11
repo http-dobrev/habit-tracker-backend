@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -40,6 +40,7 @@ public class AuthController {
 
         User user = (User) authentication.getPrincipal();
 
+        assert user != null;
         UserResponse response = new UserResponse(
                 user.getId(),
                 user.getName(),

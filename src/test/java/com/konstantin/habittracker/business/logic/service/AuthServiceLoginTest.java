@@ -91,7 +91,6 @@ class AuthServiceLoginTest {
         // Act & Assert
         assertThrows(InvalidCredentialsException.class, () -> authService.login(request));
     }
-
     @Test
     void shouldThrowExceptionWhenPasswordIsWrong() {
         // Arrange
