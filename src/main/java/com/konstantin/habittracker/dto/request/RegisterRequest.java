@@ -17,6 +17,12 @@ public class RegisterRequest {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
+    public RegisterRequest(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
     //getters
     public String getName() {return name;}
     public String getEmail() {

@@ -5,37 +5,40 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(
+        name = "habits",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "name"})
+        }
+)
+public class Habit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    @Column(unique = true, nullable = false)
-    private String email;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
-    private String password;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole userRole;
+    private HabitType type;
 
-    @Column(name = "created_at", nullable = false,  updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public User() {}
+    public Habit() {}
 
-    public User(String name, String email, String password, UserRole userRole) {
+    public Habit(User user, String name, HabitType type) {
+        this.user = user;
         this.name = name;
-        this.email = email;
-        this.password = password;
-        this.userRole = userRole;
+        this.type = type;
     }
 
     @PrePersist
@@ -49,28 +52,24 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
-    //getters
+    // getters
     public Long getId() { return id; }
+    public User getUser() { return user; }
     public String getName() { return name; }
-    public String getEmail() {
-        return email;
-    }
-    public UserRole getRole() { return userRole; }
-    public String getPassword() { return password; }
+    public HabitType getType() { return type; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    //setters
+    // setters / controlled changes
     public void updateName(String name) {
         this.name = name;
     }
 
-    public void changePassword(String hashedPassword) {
-        this.password = hashedPassword;
+    public void updateType(HabitType type) {
+        this.type = type;
     }
 
-    // controlled role change
-    public void changeRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void changeUser(User user) {
+        this.user = user;
     }
 }

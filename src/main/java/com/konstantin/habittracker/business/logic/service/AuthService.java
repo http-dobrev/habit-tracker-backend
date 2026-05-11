@@ -6,7 +6,7 @@ import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
-import com.konstantin.habittracker.model.Role;
+import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.persistence.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +39,7 @@ public class AuthService {
                 request.getName(),
                 email,
                 hashedPassword,
-                Role.USER
+                UserRole.USER
         );
 
         User savedUser = userRepository.save(user);
