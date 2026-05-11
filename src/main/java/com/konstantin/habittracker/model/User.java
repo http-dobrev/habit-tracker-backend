@@ -21,7 +21,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private UserRole userRole;
 
     @Column(name = "created_at", nullable = false,  updatable = false)
     private LocalDateTime createdAt;
@@ -31,11 +31,11 @@ public class User {
 
     public User() {}
 
-    public User(String name, String email, String password, Role role) {
+    public User(String name, String email, String password, UserRole userRole) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.userRole = userRole;
     }
 
     @PrePersist
@@ -55,7 +55,7 @@ public class User {
     public String getEmail() {
         return email;
     }
-    public Role getRole() { return role; }
+    public UserRole getRole() { return userRole; }
     public String getPassword() { return password; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
@@ -70,7 +70,7 @@ public class User {
     }
 
     // controlled role change
-    public void changeRole(Role role) {
-        this.role = role;
+    public void changeRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 }

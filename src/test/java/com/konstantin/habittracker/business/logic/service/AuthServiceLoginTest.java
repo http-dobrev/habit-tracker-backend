@@ -4,7 +4,7 @@ import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
-import com.konstantin.habittracker.model.Role;
+import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ class AuthServiceLoginTest {
                 "Konstantin",
                 "test@email.com",
                 "hashedPassword",
-                Role.USER
+                UserRole.USER
         );
 
         when(userRepository.findByEmail("test@email.com"))
@@ -102,7 +102,7 @@ class AuthServiceLoginTest {
                 "Konstantin",
                 "test@email.com",
                 "hashedPassword",
-                Role.USER
+                UserRole.USER
         );
 
         when(userRepository.findByEmail("test@email.com"))
@@ -126,7 +126,7 @@ class AuthServiceLoginTest {
                 "Konstantin",
                 "test@email.com",
                 "hashedPassword",
-                Role.USER
+                UserRole.USER
         );
 
         when(userRepository.findByEmail("test@email.com"))

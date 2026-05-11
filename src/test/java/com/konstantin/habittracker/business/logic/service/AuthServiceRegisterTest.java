@@ -3,7 +3,7 @@ package com.konstantin.habittracker.business.logic.service;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
-import com.konstantin.habittracker.model.Role;
+import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.persistence.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class AuthServiceRegisterTest {
         assertEquals(86400, response.getExpiresIn());
         assertEquals("Konstantin", response.getUser().getName());
         assertEquals("test@email.com", response.getUser().getEmail());
-        assertEquals(Role.USER.name(), response.getUser().getRole());
+        assertEquals(UserRole.USER.name(), response.getUser().getRole());
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
@@ -63,7 +63,7 @@ class AuthServiceRegisterTest {
         assertEquals("Konstantin", savedUser.getName());
         assertEquals("test@email.com", savedUser.getEmail());
         assertEquals("hashedPassword", savedUser.getPassword());
-        assertEquals(Role.USER, savedUser.getRole());
+        assertEquals(UserRole.USER, savedUser.getRole());
 
         verify(userRepository).existsByEmail("test@email.com");
         verify(passwordEncoder).encode("password123");
