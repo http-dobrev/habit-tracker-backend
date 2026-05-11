@@ -2,6 +2,7 @@ package com.konstantin.habittracker.controller;
 
 
 import com.konstantin.habittracker.business.logic.service.AuthService;
+import com.konstantin.habittracker.business.logic.service.AuthenticatedUserService;
 import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final AuthenticatedUserService authenticatedUserService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, AuthenticatedUserService authenticatedUserService) {
         this.authService = authService;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
     @PostMapping("/register")
@@ -37,10 +40,8 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(Authentication authentication) {
+        User user = authenticatedUserService.getAuthenticatedUser();
 
-        User user = (User) authentication.getPrincipal();
-
-        assert user != null;
         UserResponse response = new UserResponse(
                 user.getId(),
                 user.getName(),
