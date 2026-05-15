@@ -49,11 +49,11 @@ class AuthServiceRegisterTest {
         AuthResponse response = authService.register(request);
 
         assertNotNull(response);
-        assertEquals("jwt-token", response.getToken());
-        assertEquals(86400, response.getExpiresIn());
-        assertEquals("Konstantin", response.getUser().getName());
-        assertEquals("test@email.com", response.getUser().getEmail());
-        assertEquals(UserRole.USER.name(), response.getUser().getRole());
+        assertEquals("jwt-token", response.token());
+        assertEquals(86400, response.expiresIn());
+        assertEquals("Konstantin", response.user().name());
+        assertEquals("test@email.com", response.user().email());
+        assertEquals(UserRole.USER.name(), response.user().role());
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());

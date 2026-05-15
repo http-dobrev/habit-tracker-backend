@@ -46,13 +46,13 @@ class HabitServiceGetAllTest {
 
         assertEquals(2, responses.size());
 
-        assertEquals(10L, responses.get(0).getId());
-        assertEquals("Gym", responses.get(0).getName());
-        assertEquals(HabitType.good, responses.get(0).getType());
+        assertEquals(10L, responses.get(0).id());
+        assertEquals("Gym", responses.get(0).name());
+        assertEquals(HabitType.good, responses.get(0).type());
 
-        assertEquals(11L, responses.get(1).getId());
-        assertEquals("Smoking", responses.get(1).getName());
-        assertEquals(HabitType.bad, responses.get(1).getType());
+        assertEquals(11L, responses.get(1).id());
+        assertEquals("Smoking", responses.get(1).name());
+        assertEquals(HabitType.bad, responses.get(1).type());
 
         verify(habitRepository).findByUserId(1L);
     }

@@ -40,9 +40,9 @@ class HabitServiceGetByIdTest {
 
         HabitResponse response = habitService.getHabitById(10L);
 
-        assertEquals(10L, response.getId());
-        assertEquals("Gym", response.getName());
-        assertEquals(HabitType.good, response.getType());
+        assertEquals(10L, response.id());
+        assertEquals("Gym", response.name());
+        assertEquals(HabitType.good, response.type());
     }
 
     @Test
