@@ -61,15 +61,21 @@ public class Habit {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
     // setters / controlled changes
-    public void updateName(String name) {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 
-    public void updateType(HabitType type) {
+    public void setType(HabitType type) {
         this.type = type;
     }
 
-    public void changeUser(User user) {
-        this.user = user;
-    }
+
 }

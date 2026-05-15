@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DailyHabitService {
@@ -32,21 +34,30 @@ public class DailyHabitService {
     }
 
     @Transactional
-    public List<DailyHabitResponse> getTodayHabits() {
+    public void initializeTodayHabits() {
         User user = authenticatedUserService.getAuthenticatedUser();
         LocalDate today = LocalDate.now();
 
         List<Habit> habits = habitRepository.findByUserId(user.getId());
 
-        for (Habit habit : habits) {
-            boolean completionExists = habitCompletionRepository
-                    .existsByHabitIdAndCompletionDate(habit.getId(), today);
+        Set<Long> existingHabitIds = habitCompletionRepository
+                .findByHabitUserIdAndCompletionDate(user.getId(), today)
+                .stream()
+                .map(hc -> hc.getHabit().getId())
+                .collect(Collectors.toSet());
 
-            if (!completionExists) {
-                HabitCompletion habitCompletion = new HabitCompletion(habit, today);
-                habitCompletionRepository.save(habitCompletion);
-            }
-        }
+        List<HabitCompletion> toCreate = habits.stream()
+                .filter(h -> !existingHabitIds.contains(h.getId()))
+                .map(h -> new HabitCompletion(h, today))
+                .toList();
+
+        habitCompletionRepository.saveAll(toCreate);
+    }
+
+    @Transactional(readOnly = true)
+    public List<DailyHabitResponse> getTodayHabits() {
+        User user = authenticatedUserService.getAuthenticatedUser();
+        LocalDate today = LocalDate.now();
 
         return habitCompletionRepository
                 .findByHabitUserIdAndCompletionDate(user.getId(), today)
@@ -73,13 +84,11 @@ public class DailyHabitService {
         habitCompletion.updateCompleted(request.getCompleted());
 
         HabitCompletion savedHabitCompletion = habitCompletionRepository.save(habitCompletion);
-
         return mapToDailyHabitResponse(savedHabitCompletion);
     }
 
     private DailyHabitResponse mapToDailyHabitResponse(HabitCompletion habitCompletion) {
         Habit habit = habitCompletion.getHabit();
-
         return new DailyHabitResponse(
                 habit.getId(),
                 habit.getName(),

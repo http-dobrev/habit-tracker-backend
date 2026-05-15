@@ -62,7 +62,7 @@ public class User {
 
     //setters
     public void updateName(String name) {
-        this.name = name;
+
     }
 
     public void changePassword(String hashedPassword) {
@@ -72,5 +72,8 @@ public class User {
     // controlled role change
     public void changeRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public void setId(long l) {
     }
 }

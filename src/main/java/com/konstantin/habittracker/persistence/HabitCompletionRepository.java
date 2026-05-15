@@ -16,6 +16,4 @@ public interface HabitCompletionRepository extends JpaRepository<HabitCompletion
             Long userId,
             LocalDate completionDate
     );
-
-    boolean existsByHabitIdAndCompletionDate(Long habitId, LocalDate completionDate);
 }

@@ -53,29 +53,12 @@ public class HabitCompletion {
         updatedAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Habit getHabit() {
-        return habit;
-    }
-
-    public LocalDate getCompletionDate() {
-        return completionDate;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public Long getId() { return id; }
+    public Habit getHabit() { return habit; }
+    public LocalDate getCompletionDate() { return completionDate; }
+    public boolean isCompleted() { return completed; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 
     public void updateCompleted(boolean completed) {
         this.completed = completed;

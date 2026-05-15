@@ -19,20 +19,22 @@ public class DailyHabitController {
         this.dailyHabitService = dailyHabitService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<DailyHabitResponse>> getTodayHabits() {
-        List<DailyHabitResponse> dailyHabits = dailyHabitService.getTodayHabits();
-
-        return ResponseEntity.ok(dailyHabits);
+    @PostMapping("/initialize")
+    public ResponseEntity<Void> initializeTodayHabits() {
+        dailyHabitService.initializeTodayHabits();
+        return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{habitId}/completion")
+    @GetMapping
+    public ResponseEntity<List<DailyHabitResponse>> getTodayHabits() {
+        return ResponseEntity.ok(dailyHabitService.getTodayHabits());
+    }
+
+    @PatchMapping("/{habitId}/completion")
     public ResponseEntity<DailyHabitResponse> updateTodayHabitCompletion(
             @PathVariable Long habitId,
             @Valid @RequestBody UpdateHabitCompletionRequest request
     ) {
-        DailyHabitResponse response = dailyHabitService.updateTodayHabitCompletion(habitId, request);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(dailyHabitService.updateTodayHabitCompletion(habitId, request));
     }
 }
