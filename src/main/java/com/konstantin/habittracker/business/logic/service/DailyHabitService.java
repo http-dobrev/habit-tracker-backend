@@ -34,15 +34,16 @@ public class DailyHabitService {
     }
 
     @Transactional
-    public void initializeTodayHabits() {
+    public List<DailyHabitResponse> getTodayHabits() {
         User user = authenticatedUserService.getAuthenticatedUser();
         LocalDate today = LocalDate.now();
 
         List<Habit> habits = habitRepository.findByUserId(user.getId());
 
-        Set<Long> existingHabitIds = habitCompletionRepository
-                .findByHabitUserIdAndCompletionDate(user.getId(), today)
-                .stream()
+        List<HabitCompletion> existingCompletions = habitCompletionRepository
+                .findByHabitUserIdAndCompletionDate(user.getId(), today);
+
+        Set<Long> existingHabitIds = existingCompletions.stream()
                 .map(hc -> hc.getHabit().getId())
                 .collect(Collectors.toSet());
 
@@ -51,13 +52,9 @@ public class DailyHabitService {
                 .map(h -> new HabitCompletion(h, today))
                 .toList();
 
-        habitCompletionRepository.saveAll(toCreate);
-    }
-
-    @Transactional(readOnly = true)
-    public List<DailyHabitResponse> getTodayHabits() {
-        User user = authenticatedUserService.getAuthenticatedUser();
-        LocalDate today = LocalDate.now();
+        if (!toCreate.isEmpty()) {
+            habitCompletionRepository.saveAll(toCreate);
+        }
 
         return habitCompletionRepository
                 .findByHabitUserIdAndCompletionDate(user.getId(), today)
