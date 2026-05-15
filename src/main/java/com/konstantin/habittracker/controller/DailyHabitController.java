@@ -19,12 +19,6 @@ public class DailyHabitController {
         this.dailyHabitService = dailyHabitService;
     }
 
-    @PostMapping("/initialize")
-    public ResponseEntity<Void> initializeTodayHabits() {
-        dailyHabitService.initializeTodayHabits();
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping
     public ResponseEntity<List<DailyHabitResponse>> getTodayHabits() {
         return ResponseEntity.ok(dailyHabitService.getTodayHabits());
