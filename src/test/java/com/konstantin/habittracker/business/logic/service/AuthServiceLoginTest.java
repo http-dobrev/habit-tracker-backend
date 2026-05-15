@@ -65,17 +65,17 @@ class AuthServiceLoginTest {
 
         // Act
         AuthResponse response = authService.login(request);
-        UserResponse responseUser = response.getUser();
+        UserResponse responseUser = response.user();
 
         // Assert
-        assertEquals("jwt-token", response.getToken());
-        assertEquals(3600, response.getExpiresIn());
+        assertEquals("jwt-token", response.token());
+        assertEquals(3600, response.expiresIn());
 
         assertNotNull(responseUser);
-        assertEquals(user.getId(), responseUser.getId());
-        assertEquals("Konstantin", responseUser.getName());
-        assertEquals("test@email.com", responseUser.getEmail());
-        assertEquals("USER", responseUser.getRole());
+        assertEquals(user.getId(), responseUser.id());
+        assertEquals("Konstantin", responseUser.name());
+        assertEquals("test@email.com", responseUser.email());
+        assertEquals("USER", responseUser.role());
     }
 
     @Test

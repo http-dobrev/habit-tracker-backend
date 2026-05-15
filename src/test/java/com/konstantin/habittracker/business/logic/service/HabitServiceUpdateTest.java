@@ -49,12 +49,12 @@ class HabitServiceUpdateTest {
 
         HabitResponse response = habitService.updateHabit(10L, request);
 
-        assertEquals(10L, response.getId());
-        assertEquals("New Gym", response.getName());
-        assertEquals(HabitType.good, response.getType());
+        assertEquals(10L, response.id());
+        assertEquals("New Gym", response.name());
+        assertEquals(HabitType.good, response.type());
 
-        verify(habit).updateName("New Gym");
-        verify(habit).updateType(HabitType.good);
+        verify(habit).setName("New Gym");
+        verify(habit).setType(HabitType.good);
         verify(habitRepository).save(habit);
     }
 

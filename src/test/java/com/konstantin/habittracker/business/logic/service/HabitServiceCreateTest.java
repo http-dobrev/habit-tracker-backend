@@ -44,9 +44,9 @@ class HabitServiceCreateTest {
 
         HabitResponse response = habitService.createHabit(request);
 
-        assertEquals(10L, response.getId());
-        assertEquals("Gym", response.getName());
-        assertEquals(HabitType.good, response.getType());
+        assertEquals(10L, response.id());
+        assertEquals("Gym", response.name());
+        assertEquals(HabitType.good, response.type());
 
         ArgumentCaptor<Habit> habitCaptor = ArgumentCaptor.forClass(Habit.class);
         verify(habitRepository).save(habitCaptor.capture());

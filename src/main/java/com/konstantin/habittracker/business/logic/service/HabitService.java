@@ -93,8 +93,8 @@ public class HabitService {
             throw new InvalidHabitDataException("Habit with this name already exists");
         }
 
-        habit.updateName(normalizedRequestName);
-        habit.updateType(request.getType());
+        habit.setName(normalizedRequestName);
+        habit.setType(request.getType());
 
         Habit updatedHabit = habitRepository.save(habit);
 
