@@ -3,7 +3,7 @@ package com.konstantin.habittracker.business.logic.service;
 import com.konstantin.habittracker.exception.HabitNotFoundException;
 import com.konstantin.habittracker.model.Habit;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.HabitRepository;
+import com.konstantin.habittracker.repository.HabitRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;

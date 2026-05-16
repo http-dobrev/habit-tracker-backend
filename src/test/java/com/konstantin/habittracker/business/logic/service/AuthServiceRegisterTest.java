@@ -5,7 +5,7 @@ import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
 import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.UserRepository;
+import com.konstantin.habittracker.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

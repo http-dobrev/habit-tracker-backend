@@ -6,8 +6,8 @@ import com.konstantin.habittracker.exception.HabitNotFoundException;
 import com.konstantin.habittracker.model.Habit;
 import com.konstantin.habittracker.model.HabitCompletion;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.HabitCompletionRepository;
-import com.konstantin.habittracker.persistence.HabitRepository;
+import com.konstantin.habittracker.repository.HabitCompletionRepository;
+import com.konstantin.habittracker.repository.HabitRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

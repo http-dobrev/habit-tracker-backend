@@ -2,7 +2,7 @@ package com.konstantin.habittracker.business.logic.service;
 
 import com.konstantin.habittracker.exception.UserNotFoundException;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.UserRepository;
+import com.konstantin.habittracker.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

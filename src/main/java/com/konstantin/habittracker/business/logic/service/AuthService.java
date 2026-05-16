@@ -6,9 +6,11 @@ import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
+import com.konstantin.habittracker.model.RefreshToken;
 import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.UserRepository;
+import com.konstantin.habittracker.repository.UserRepository;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +20,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthService(JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -44,19 +48,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String token = jwtService.generateToken(savedUser);
-        Integer expirationInSeconds = jwtService.getExpirationInSeconds();
-
-        return new AuthResponse(
-                token,
-                expirationInSeconds,
-                new UserResponse(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getRole().name()
-                )
-        );
+        return getAuthResponse(user);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -73,18 +65,21 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        String token = jwtService.generateToken(user);
-        Integer expirationInSeconds = jwtService.getExpirationInSeconds();
+        return getAuthResponse(user);
+    }
 
-        return new AuthResponse(
-                token,
-                expirationInSeconds,
-                new UserResponse(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getRole().name()
-                )
+    @NonNull
+    private AuthResponse getAuthResponse(User user) {
+        String accessToken = jwtService.generateToken(user);
+        int expirationInSeconds = jwtService.getExpirationInSeconds();
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        UserResponse userResponse = new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name()
         );
+
+        return new AuthResponse(accessToken, refreshToken.getToken(), expirationInSeconds, userResponse);
     }
 }

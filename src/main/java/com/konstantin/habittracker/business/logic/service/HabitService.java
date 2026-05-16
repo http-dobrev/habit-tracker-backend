@@ -7,7 +7,7 @@ import com.konstantin.habittracker.exception.HabitNotFoundException;
 import com.konstantin.habittracker.exception.InvalidHabitDataException;
 import com.konstantin.habittracker.model.Habit;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.HabitRepository;
+import com.konstantin.habittracker.repository.HabitRepository;
 
 import org.springframework.stereotype.Service;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.konstantin.habittracker.persistence;
+package com.konstantin.habittracker.repository;
 
 import com.konstantin.habittracker.model.HabitCompletion;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -6,7 +6,8 @@ import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
 import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.UserRepository;
+import com.konstantin.habittracker.repository.RefreshTokenRepository;
+import com.konstantin.habittracker.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,12 +30,15 @@ class AuthServiceLoginTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private RefreshTokenService refreshTokenService;
+
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        authService = new AuthService(jwtService, userRepository, passwordEncoder);
+        authService = new AuthService(jwtService, userRepository, passwordEncoder, refreshTokenService);
     }
 
     @Test

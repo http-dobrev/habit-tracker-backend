@@ -2,7 +2,7 @@ package com.konstantin.habittracker.configuration;
 
 import com.konstantin.habittracker.business.logic.service.JwtService;
 import com.konstantin.habittracker.model.User;
-import com.konstantin.habittracker.persistence.UserRepository;
+import com.konstantin.habittracker.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
