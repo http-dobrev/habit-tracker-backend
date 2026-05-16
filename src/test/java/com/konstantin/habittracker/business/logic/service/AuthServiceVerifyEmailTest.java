@@ -1,6 +1,6 @@
 package com.konstantin.habittracker.business.logic.service;
 
-import com.konstantin.habittracker.dto.request.LoginRequest;
+import com.konstantin.habittracker.dto.request.VerifyEmailRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
 import com.konstantin.habittracker.model.RefreshToken;
@@ -20,10 +20,12 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthServiceLoginTest {
+class AuthServiceVerifyEmailTest {
 
     @Mock JwtService jwtService;
     @Mock UserRepository userRepository;
@@ -33,66 +35,56 @@ class AuthServiceLoginTest {
 
     @InjectMocks AuthService authService;
 
-    private User verifiedUser;
     private User unverifiedUser;
     private RefreshToken refreshToken;
 
     @BeforeEach
     void setUp() {
-        verifiedUser = new User("John", "john@example.com", "hashed", UserRole.USER);
-        verifiedUser.setEmailVerified(true);
-
         unverifiedUser = new User("John", "john@example.com", "hashed", UserRole.USER);
         unverifiedUser.setEmailVerified(false);
 
         refreshToken = new RefreshToken();
         refreshToken.setToken("refresh-token-value");
-        refreshToken.setUser(verifiedUser);
+        refreshToken.setUser(unverifiedUser);
         refreshToken.setExpiryDate(Instant.now().plusSeconds(86400));
     }
 
     @Test
-    void login_success() {
-        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(verifiedUser));
-        when(passwordEncoder.matches("password123", "hashed")).thenReturn(true);
-        when(jwtService.generateToken(verifiedUser)).thenReturn("access-token");
+    void verifyEmail_success() {
+        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(unverifiedUser));
+        when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(jwtService.generateToken(any())).thenReturn("access-token");
         when(jwtService.getExpirationInSeconds()).thenReturn(86400);
-        when(refreshTokenService.createRefreshToken(verifiedUser)).thenReturn(refreshToken);
+        when(refreshTokenService.createRefreshToken(any())).thenReturn(refreshToken);
 
-        AuthResponse response = authService.login(
-                new LoginRequest("john@example.com", "password123"));
+        AuthResponse response = authService.verifyEmail(
+                new VerifyEmailRequest("john@example.com", "123456"));
 
         assertThat(response.token()).isEqualTo("access-token");
         assertThat(response.refreshToken()).isEqualTo("refresh-token-value");
+        assertThat(unverifiedUser.isEmailVerified()).isTrue();
+        assertThat(unverifiedUser.getVerificationCode()).isNull();
+        assertThat(unverifiedUser.getVerificationCodeExpiry()).isNull();
     }
 
     @Test
-    void login_throwsWhenUserNotFound() {
+    void verifyEmail_throwsWhenUserNotFound() {
         when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authService.login(
-                new LoginRequest("john@example.com", "password123")))
+        assertThatThrownBy(() -> authService.verifyEmail(
+                new VerifyEmailRequest("john@example.com", "123456")))
                 .isInstanceOf(InvalidCredentialsException.class);
     }
 
     @Test
-    void login_throwsWhenPasswordWrong() {
-        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(verifiedUser));
-        when(passwordEncoder.matches("wrongpassword", "hashed")).thenReturn(false);
-
-        assertThatThrownBy(() -> authService.login(
-                new LoginRequest("john@example.com", "wrongpassword")))
-                .isInstanceOf(InvalidCredentialsException.class);
-    }
-
-    @Test
-    void login_throwsWhenEmailNotVerified() {
+    void verifyEmail_throwsWhenCodeInvalid() {
         when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(unverifiedUser));
-        when(passwordEncoder.matches("password123", "hashed")).thenReturn(true);
+        doThrow(new InvalidCredentialsException("Invalid verification code."))
+                .when(verificationCodeService).verifyCode(any(), eq("wrongcode"));
 
-        assertThatThrownBy(() -> authService.login(
-                new LoginRequest("john@example.com", "password123")))
+        assertThatThrownBy(() -> authService.verifyEmail(
+                new VerifyEmailRequest("john@example.com", "wrongcode")))
                 .isInstanceOf(InvalidCredentialsException.class)
-                .hasMessageContaining("verify your email");
+                .hasMessageContaining("Invalid verification code");
     }
 }
