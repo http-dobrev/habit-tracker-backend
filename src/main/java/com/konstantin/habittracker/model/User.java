@@ -2,6 +2,7 @@ package com.konstantin.habittracker.model;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,6 +23,15 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private UserRole userRole;
+
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verification_code_expiry")
+    private Instant verificationCodeExpiry;
 
     @Column(name = "created_at", nullable = false,  updatable = false)
     private LocalDateTime createdAt;
@@ -57,23 +67,19 @@ public class User {
     }
     public UserRole getRole() { return userRole; }
     public String getPassword() { return password; }
+    public boolean isEmailVerified() { return emailVerified; }
+    public String getVerificationCode() { return verificationCode; }
+    public Instant getVerificationCodeExpiry() { return verificationCodeExpiry; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
     //setters
-    public void updateName(String name) {
-
-    }
-
-    public void changePassword(String hashedPassword) {
-        this.password = hashedPassword;
-    }
-
-    // controlled role change
-    public void changeRole(UserRole userRole) {
-        this.userRole = userRole;
-    }
-
-    public void setId(long l) {
-    }
+    public void setId(long l) { this.id = l; }
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    public void setRole(UserRole userRole) { this.userRole = userRole; }
+    public void setPassword(String hashedPassword) { this.password = hashedPassword; }
+    public void setEmailVerified(boolean b) { this.emailVerified = b; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+    public void setVerificationCodeExpiry(Instant instant) { this.verificationCodeExpiry = instant; }
 }

@@ -5,12 +5,8 @@ import com.konstantin.habittracker.business.logic.service.AuthService;
 import com.konstantin.habittracker.business.logic.service.AuthenticatedUserService;
 import com.konstantin.habittracker.business.logic.service.JwtService;
 import com.konstantin.habittracker.business.logic.service.RefreshTokenService;
-import com.konstantin.habittracker.dto.request.LoginRequest;
-import com.konstantin.habittracker.dto.request.RefreshRequest;
-import com.konstantin.habittracker.dto.request.RegisterRequest;
-import com.konstantin.habittracker.dto.response.AuthResponse;
-import com.konstantin.habittracker.dto.response.RefreshResponse;
-import com.konstantin.habittracker.dto.response.UserResponse;
+import com.konstantin.habittracker.dto.request.*;
+import com.konstantin.habittracker.dto.response.*;
 import com.konstantin.habittracker.model.RefreshToken;
 import com.konstantin.habittracker.model.User;
 import jakarta.validation.Valid;
@@ -39,29 +35,31 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<AuthResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+        return ResponseEntity.ok(authService.verifyEmail(request));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<ResendVerificationResponse> resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
+        return ResponseEntity.ok(authService.resendVerification(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(Authentication authentication) {
+    public ResponseEntity<UserResponse> getCurrentUser() {
         User user = authenticatedUserService.getAuthenticatedUser();
-
-        UserResponse response = new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().name()
-        );
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new UserResponse(
+                user.getId(), user.getName(), user.getEmail(), user.getRole().name()
+        ));
     }
 
     @PostMapping("/refresh")
@@ -69,7 +67,7 @@ public class AuthController {
         RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken());
         refreshTokenService.verifyExpiration(refreshToken);
         String newAccessToken = jwtService.generateToken(refreshToken.getUser());
-        return ResponseEntity.ok(new RefreshResponse(newAccessToken, 86400));
+        return ResponseEntity.ok(new RefreshResponse(newAccessToken, jwtService.getExpirationInSeconds()));
     }
 
     @PostMapping("/logout")

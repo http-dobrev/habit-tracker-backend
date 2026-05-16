@@ -2,7 +2,11 @@ package com.konstantin.habittracker.business.logic.service;
 
 import com.konstantin.habittracker.dto.request.LoginRequest;
 import com.konstantin.habittracker.dto.request.RegisterRequest;
+import com.konstantin.habittracker.dto.request.ResendVerificationRequest;
+import com.konstantin.habittracker.dto.request.VerifyEmailRequest;
 import com.konstantin.habittracker.dto.response.AuthResponse;
+import com.konstantin.habittracker.dto.response.RegisterResponse;
+import com.konstantin.habittracker.dto.response.ResendVerificationResponse;
 import com.konstantin.habittracker.dto.response.UserResponse;
 import com.konstantin.habittracker.exception.EmailAlreadyExistsException;
 import com.konstantin.habittracker.exception.InvalidCredentialsException;
@@ -10,7 +14,6 @@ import com.konstantin.habittracker.model.RefreshToken;
 import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.repository.UserRepository;
-import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,65 +24,95 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
+    private final VerificationCodeService verificationCodeService;
 
-    public AuthService(JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
+    public AuthService(JwtService jwtService,
+                       UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       RefreshTokenService refreshTokenService,
+                       VerificationCodeService verificationCodeService) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
+        this.verificationCodeService = verificationCodeService;
     }
 
-    public AuthResponse register(RegisterRequest request) {
-
+    public RegisterResponse register(RegisterRequest request) {
         String email = request.getEmail().trim().toLowerCase();
 
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-
         User user = new User(
                 request.getName(),
                 email,
-                hashedPassword,
+                passwordEncoder.encode(request.getPassword()),
                 UserRole.USER
         );
+        user.setEmailVerified(false);
 
-        User savedUser = userRepository.save(user);
+        userRepository.save(user);
+        verificationCodeService.sendCode(user);
 
-        return getAuthResponse(user);
+        return new RegisterResponse("Verification email sent. Please check your inbox.");
+    }
+
+    public AuthResponse verifyEmail(VerifyEmailRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or code"));
+
+        verificationCodeService.verifyCode(user, request.getCode());
+
+        user.setEmailVerified(true);
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiry(null);
+        userRepository.save(user);
+
+        return buildAuthResponse(user);
+    }
+
+    public ResendVerificationResponse resendVerification(ResendVerificationRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("No account found with that email"));
+
+        if (user.isEmailVerified()) {
+            throw new IllegalStateException("Email is already verified");
+        }
+
+        verificationCodeService.sendCode(user);
+
+        return new ResendVerificationResponse("Verification code resent.");
     }
 
     public AuthResponse login(LoginRequest request) {
         String email = request.getEmail().trim().toLowerCase();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
-        boolean passwordMatches = passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword()
-        );
-
-        if (!passwordMatches) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        return getAuthResponse(user);
+        if (!user.isEmailVerified()) {
+            throw new InvalidCredentialsException("Please verify your email before logging in");
+        }
+
+        return buildAuthResponse(user);
     }
 
-    @NonNull
-    private AuthResponse getAuthResponse(User user) {
+    private AuthResponse buildAuthResponse(User user) {
         String accessToken = jwtService.generateToken(user);
-        int expirationInSeconds = jwtService.getExpirationInSeconds();
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().name()
+                user.getId(), user.getName(), user.getEmail(), user.getRole().name()
         );
-
-        return new AuthResponse(accessToken, refreshToken.getToken(), expirationInSeconds, userResponse);
+        return new AuthResponse(accessToken, refreshToken.getToken(), jwtService.getExpirationInSeconds(), userResponse);
     }
 }
