@@ -78,7 +78,7 @@ class DailyHSUpdateTodayHabitCompletionTest {
     @Test
     void shouldMarkExistingCompletionAsNotCompleted() {
         HabitCompletion existingCompletion = new HabitCompletion(habit, today);
-        existingCompletion.updateCompleted(true);
+        existingCompletion.setCompleted(true);
         UpdateHabitCompletionRequest request = buildRequest(false);
 
         when(habitRepository.findByIdAndUserId(habit.getId(), user.getId()))

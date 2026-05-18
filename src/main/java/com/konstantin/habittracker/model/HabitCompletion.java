@@ -60,7 +60,10 @@ public class HabitCompletion {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    public void updateCompleted(boolean completed) {
-        this.completed = completed;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void getHabit(Habit habit) { this.habit = habit; }
+    public void setCompletionDate(LocalDate completionDate) { this.completionDate = completionDate; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

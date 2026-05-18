@@ -78,7 +78,7 @@ public class DailyHabitService {
                 .findByHabitIdAndHabitUserIdAndCompletionDate(habitId, user.getId(), today)
                 .orElseGet(() -> new HabitCompletion(habit, today));
 
-        habitCompletion.updateCompleted(request.getCompleted());
+        habitCompletion.setCompleted(request.getCompleted());
 
         HabitCompletion savedHabitCompletion = habitCompletionRepository.save(habitCompletion);
         return mapToDailyHabitResponse(savedHabitCompletion);

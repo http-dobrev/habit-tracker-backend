@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HabitCompletionRepository extends JpaRepository<HabitCompletion, Long> {
-
     List<HabitCompletion> findByHabitUserIdAndCompletionDate(Long userId, LocalDate completionDate);
 
     Optional<HabitCompletion> findByHabitIdAndHabitUserIdAndCompletionDate(
@@ -16,4 +15,6 @@ public interface HabitCompletionRepository extends JpaRepository<HabitCompletion
             Long userId,
             LocalDate completionDate
     );
+
+    List<HabitCompletion> findByHabitUserId(Long userId);
 }
