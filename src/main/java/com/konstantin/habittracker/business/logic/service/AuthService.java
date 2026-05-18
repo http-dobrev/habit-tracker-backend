@@ -1,9 +1,6 @@
 package com.konstantin.habittracker.business.logic.service;
 
-import com.konstantin.habittracker.dto.request.LoginRequest;
-import com.konstantin.habittracker.dto.request.RegisterRequest;
-import com.konstantin.habittracker.dto.request.ResendVerificationRequest;
-import com.konstantin.habittracker.dto.request.VerifyEmailRequest;
+import com.konstantin.habittracker.dto.request.*;
 import com.konstantin.habittracker.dto.response.AuthResponse;
 import com.konstantin.habittracker.dto.response.RegisterResponse;
 import com.konstantin.habittracker.dto.response.ResendVerificationResponse;
@@ -114,5 +111,13 @@ public class AuthService {
                 user.getId(), user.getName(), user.getEmail(), user.getRole().name()
         );
         return new AuthResponse(accessToken, refreshToken.getToken(), jwtService.getExpirationInSeconds(), userResponse);
+    }
+
+    public void deleteAccount(DeleteAccountRequest request) {
+        RefreshToken refreshToken = refreshTokenService.findByToken(request.refreshToken());
+        refreshTokenService.verifyExpiration(refreshToken);
+        User user = refreshToken.getUser();
+        refreshTokenService.deleteByUser(user);
+        userRepository.delete(user);
     }
 }

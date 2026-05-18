@@ -76,4 +76,10 @@ public class AuthController {
         refreshTokenService.deleteByUser(refreshToken.getUser());
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/delete-account")
+    public ResponseEntity<Void> deleteAccount(@Valid @RequestBody DeleteAccountRequest request) {
+        authService.deleteAccount(request);
+        return ResponseEntity.noContent().build();
+    }
 }
