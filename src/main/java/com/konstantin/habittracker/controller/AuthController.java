@@ -70,6 +70,12 @@ public class AuthController {
         return ResponseEntity.ok(new RefreshResponse(newAccessToken, jwtService.getExpirationInSeconds()));
     }
 
+    @PatchMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequest request) {
         RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken());

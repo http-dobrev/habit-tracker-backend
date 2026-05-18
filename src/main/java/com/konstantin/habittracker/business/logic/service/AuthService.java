@@ -11,6 +11,7 @@ import com.konstantin.habittracker.model.RefreshToken;
 import com.konstantin.habittracker.model.UserRole;
 import com.konstantin.habittracker.model.User;
 import com.konstantin.habittracker.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +23,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final VerificationCodeService verificationCodeService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public AuthService(JwtService jwtService,
                        UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        RefreshTokenService refreshTokenService,
-                       VerificationCodeService verificationCodeService) {
+                       VerificationCodeService verificationCodeService,
+                       AuthenticatedUserService authenticatedUserService) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
         this.verificationCodeService = verificationCodeService;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -102,6 +106,17 @@ public class AuthService {
         }
 
         return buildAuthResponse(user);
+    }
+
+    public void changePassword(ChangePasswordRequest request) {
+        User user = authenticatedUserService.getAuthenticatedUser();
+
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
     }
 
     private AuthResponse buildAuthResponse(User user) {
