@@ -39,8 +39,7 @@ public class HabitCompletionService {
                 habit.getName(),
                 habit.getType(),
                 habitCompletion.getCompletionDate(),
-                habitCompletion.isCompleted(),
-                habitCompletion.getCreatedAt()
+                habitCompletion.isCompleted()
         );
     }
 }

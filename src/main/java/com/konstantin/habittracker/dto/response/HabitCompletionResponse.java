@@ -11,6 +11,5 @@ public record HabitCompletionResponse(
         String habitName,
         HabitType habitType,
         LocalDate completionDate,
-        boolean completed,
-        LocalDateTime createdAt
+        boolean completed
 ) {}
