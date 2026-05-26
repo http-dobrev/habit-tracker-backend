@@ -70,12 +70,18 @@ spring.datasource.password=your_password
 The API will start on `http://localhost:8080`
 
 ## Project Structure
+
+```
 src/
 └── main/
-└── java/com/habittracker/
-├── controller/    # REST controllers
-├── service/       # Business logic
-├── repository/    # Database access
-├── model/         # Entity classes
-├── dto/           # Data transfer objects
-└── security/      # JWT and auth config
+    └── java/com/konstantin/habittracker/
+        ├── controller/       # REST controllers
+        ├── business/logic/
+        │   └── service/      # Business logic
+        ├── repository/       # Database access
+        ├── model/            # Entity classes
+        ├── dto/
+        │   ├── request/      # Request DTOs
+        │   └── response/     # Response DTOs
+        └── security/         # JWT and auth config
+```
