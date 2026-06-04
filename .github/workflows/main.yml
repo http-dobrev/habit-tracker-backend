@@ -34,17 +34,17 @@ jobs:
       - name: Build and test project
         run: ./gradlew clean build
 
+      - name: SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar -Dsonar.host.url=https://sonarcloud.io
+
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-report
           path: build/reports/tests/
-
-      - name: SonarCloud Analysis
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          run: ./gradlew sonar -Dsonar.host.url=https://sonarcloud.io
 
   deploy:
     runs-on: ubuntu-latest
