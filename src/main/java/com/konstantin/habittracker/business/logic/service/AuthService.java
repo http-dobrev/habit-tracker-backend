@@ -40,6 +40,7 @@ public class AuthService {
     }
 
     public RegisterResponse register(RegisterRequest request) {
+        String password = "admin123";
         String email = request.getEmail().trim().toLowerCase();
 
         if (userRepository.existsByEmail(email)) {
@@ -93,6 +94,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         String email = request.getEmail().trim().toLowerCase();
+
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
