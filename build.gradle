@@ -9,6 +9,7 @@ sonar {
     properties {
         property "sonar.projectKey", "http-dobrev_habit-tracker-backend"
         property "sonar.organization", "http-dobrev"
+        property "sonar.qualitygate.wait", "true"
     }
 }
 
