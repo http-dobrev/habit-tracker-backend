@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 public class VerificationCodeService {
 
     private static final long CODE_EXPIRY_MINUTES = 15;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
@@ -25,7 +26,7 @@ public class VerificationCodeService {
     }
 
     public void sendCode(User user) {
-        String code = String.format("%06d", new SecureRandom().nextInt(1_000_000));
+        String code = String.format("%06d", SECURE_RANDOM.nextInt(1_000_000));
 
         user.setVerificationCode(code);
         user.setVerificationCodeExpiry(Instant.now().plus(CODE_EXPIRY_MINUTES, ChronoUnit.MINUTES));
