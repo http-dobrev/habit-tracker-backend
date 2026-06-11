@@ -29,8 +29,8 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build and test project
-        run: ./gradlew clean build
+      - name: Build, test and generate coverage
+        run: ./gradlew clean build jacocoTestReport
 
       - name: SonarCloud Analysis
         env:

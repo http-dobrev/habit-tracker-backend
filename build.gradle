@@ -3,14 +3,7 @@ plugins {
     id 'org.springframework.boot' version '4.0.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.sonarqube' version '7.3.1.8318'
-}
-
-sonar {
-    properties {
-        property "sonar.projectKey", "http-dobrev_habit-tracker-backend"
-        property "sonar.organization", "http-dobrev"
-        property "sonar.qualitygate.wait", "true"
-    }
+    id 'jacoco'
 }
 
 group = 'com.konstantin'
@@ -48,10 +41,32 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+sonar {
+    properties {
+        property "sonar.projectKey", "http-dobrev_habit-tracker-backend"
+        property "sonar.organization", "http-dobrev"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.java.binaries", "build/classes/java/main"
+        property "sonar.sources", "src/main/java"
+        property "sonar.tests", "src/test/java"
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
 test {
     useJUnitPlatform()
+    jvmArgs = ["-XX:+EnableDynamicAgentLoading"]
+    finalizedBy jacocoTestReport
+}
 
-    jvmArgs += [
-            "-XX:+EnableDynamicAgentLoading"
-    ]
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true   // SonarQube reads XML
+        html.required = true  // human-readable local view
+    }
 }
