@@ -40,7 +40,6 @@ public class AuthService {
     }
 
     public RegisterResponse register(RegisterRequest request) {
-        String password = "admin123";
         String email = request.getEmail().trim().toLowerCase();
 
         if (userRepository.existsByEmail(email)) {
